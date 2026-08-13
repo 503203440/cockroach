@@ -1,0 +1,16 @@
+# MSVC build artifacts
+*.obj
+*.res
+*.exe
+*.pdb
+*.ilk
+
+# Temporary / backup files
+cockroach_orig.png
+scratch/
+
+# VS & IDE directories
+.vs/
+.idea/
+*.suo
+*.user

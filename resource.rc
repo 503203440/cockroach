@@ -1,0 +1,2 @@
+#include "resource.h"
+IDR_ROACH_PNG RCDATA "cockroach.png"

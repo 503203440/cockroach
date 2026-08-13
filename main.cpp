@@ -287,6 +287,68 @@ static void DrawLeg(float jx, float jy, float baseAng, float femLen, float tibLe
     g_gfx->DrawLine(&tarPen, ax, ay, fx, fy);
 }
 
+static void DrawSingleAntenna(
+    Graphics* gfx, Pen* pen1, Pen* pen2,
+    float startX, float startY,
+    float restAngle, bool isLeft, float animT, float ampMult
+) {
+    float dir = isLeft ? -1.0f : 1.0f;
+
+    // Base rotation sweep (low frequency organic sweeping)
+    float baseSweep = sinf(animT * 1.5f + (isLeft ? 0.0f : 2.1f)) * 0.16f
+                    + 0.06f * sinf(animT * 0.4f);
+
+    // Flexible whip bending wave (phase-lagged flexure towards tip)
+    float whipBend = cosf(animT * 1.5f - 0.7f + (isLeft ? 0.0f : 2.1f)) * 0.20f
+                   + 0.05f * cosf(animT * 2.8f);
+
+    // High-frequency sniffing tremor (active during pause state)
+    float tremor = sinf(animT * 4.2f + (isLeft ? 0.5f : 1.8f)) * 0.04f;
+
+    float totalBaseRot = (baseSweep + tremor) * ampMult;
+    float totalWhipFlex = (whipBend + tremor * 1.5f) * ampMult;
+
+    // Key points along antenna curve (total length L ~ 104px)
+    // s: normalized distance along antenna in [0, 1]
+    const int NUM_POINTS = 5;
+    float dists[NUM_POINTS] = { 0.0f, 28.0f, 62.0f, 84.0f, 104.0f };
+    float sVals[NUM_POINTS] = { 0.0f, 0.269f, 0.596f, 0.808f, 1.000f };
+
+    PointF pts[NUM_POINTS];
+    pts[0] = PointF(startX, startY);
+
+    float currX = startX;
+    float currY = startY;
+
+    for (int i = 1; i < NUM_POINTS; i++) {
+        float s = sVals[i];
+        float stepDist = dists[i] - dists[i-1];
+
+        // Tangent angle at normalized distance s:
+        // restAngle + natural graceful outward curvature (0.15 * s^2)
+        // + root rotation sweep * s
+        // + tip whip bend * s^1.4
+        float arcCurvature = dir * 0.15f * (s * s);
+        float tangAngle = restAngle + totalBaseRot * s + totalWhipFlex * powf(s, 1.4f) + arcCurvature;
+
+        currX += cosf(tangAngle) * stepDist;
+        currY += sinf(tangAngle) * stepDist;
+        pts[i] = PointF(currX, currY);
+    }
+
+    // Segment 1 (thicker base segment): pts[0] -> pts[2] using pts[1] as control point
+    gfx->DrawBezier(pen1, pts[0].X, pts[0].Y,
+                          pts[1].X, pts[1].Y,
+                          (pts[1].X + pts[2].X) * 0.5f, (pts[1].Y + pts[2].Y) * 0.5f,
+                          pts[2].X, pts[2].Y);
+
+    // Segment 2 (thinner tip segment): pts[2] -> pts[4] using pts[3] as control point
+    gfx->DrawBezier(pen2, pts[2].X, pts[2].Y,
+                          pts[3].X, pts[3].Y,
+                          (pts[3].X + pts[4].X) * 0.5f, (pts[3].Y + pts[4].Y) * 0.5f,
+                          pts[4].X, pts[4].Y);
+}
+
 static void DrawCockroach() {
     // -----------------------------------------------------------------------
     // 1. Tail Cerci & Abdomen Tip (0.8x scaled)
@@ -347,7 +409,7 @@ static void DrawCockroach() {
     }
 
     // -----------------------------------------------------------------------
-    // 4. Dynamic Whip Antennae (0.8x Scaled Reach ~136px)
+    // 4. Dynamic Whip Antennae (Forward Kinematics Whip Model)
     // -----------------------------------------------------------------------
     Pen antPen1(Color(255, 35, 12, 4), 2.5f);
     antPen1.SetStartCap(LineCapRound);
@@ -362,23 +424,13 @@ static void DrawCockroach() {
     g_gfx->FillEllipse(&antJoint, 32.0f, -5.5f, 5.0f, 5.0f);
     g_gfx->FillEllipse(&antJoint, 32.0f,  1.0f, 5.0f, 5.0f);
 
-    float ampMult = (g_subState == SUB_PAUSE) ? 3.0f : 1.6f;
-
-    // Left Antenna: independent frequency 1.4f & phase
-    float lWig1 = sinf(g_antAnimT * 1.4f + 0.5f) * (4.3f + 2.4f * sinf(g_antAnimT * 0.35f)) * ampMult;
-    float lWig2 = cosf(g_antAnimT * 1.1f + 1.2f) * (3.3f + 1.8f * cosf(g_antAnimT * 0.28f)) * ampMult;
-
-    // Right Antenna: independent frequency 1.7f, phase +2.1f & amplitude modulation
-    float rWig1 = sinf(g_antAnimT * 1.7f + 2.1f) * (4.8f + 2.8f * cosf(g_antAnimT * 0.42f)) * ampMult;
-    float rWig2 = cosf(g_antAnimT * 1.3f + 0.8f) * (3.0f + 1.6f * sinf(g_antAnimT * 0.31f)) * ampMult;
+    float ampMult = (g_subState == SUB_PAUSE) ? 2.5f : 1.4f;
 
     // Draw Left Antenna
-    g_gfx->DrawBezier(&antPen1, 34.0f, -4.0f, 53.0f, -12.0f, 74.0f, -18.0f + lWig1, 96.0f + lWig2, -26.0f + lWig1);
-    g_gfx->DrawBezier(&antPen2, 96.0f + lWig2, -26.0f + lWig1, 110.0f, -32.0f, 122.0f, -37.0f + lWig1, 136.0f, -42.0f + lWig2);
+    DrawSingleAntenna(g_gfx, &antPen1, &antPen2, 34.0f, -4.0f, -0.356f, true, g_antAnimT, ampMult);
 
     // Draw Right Antenna
-    g_gfx->DrawBezier(&antPen1, 34.0f,  4.0f, 53.0f,  12.0f, 74.0f,  18.0f + rWig1, 96.0f + rWig2,  26.0f + rWig1);
-    g_gfx->DrawBezier(&antPen2, 96.0f + rWig2,  26.0f + rWig1, 110.0f,  32.0f, 122.0f,  37.0f + rWig1, 136.0f,  42.0f + rWig2);
+    DrawSingleAntenna(g_gfx, &antPen1, &antPen2, 34.0f,  4.0f,  0.356f, false, g_antAnimT, ampMult);
 }
 
 static void RenderFrame() {

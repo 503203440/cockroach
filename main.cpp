@@ -669,13 +669,23 @@ static void AddTray() {
     g_nid.uID = 1;
     g_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     g_nid.uCallbackMessage = WM_TRAY;
-    g_nid.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+
+    HICON hIcon = NULL;
+    if (g_imgRoach && g_imgRoach->GetHICON(&hIcon) == Ok && hIcon) {
+        g_nid.hIcon = hIcon;
+    } else {
+        g_nid.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ROACH_ICON));
+    }
     lstrcpyW(g_nid.szTip, L"蟑螂小恶作剧");
     Shell_NotifyIcon(NIM_ADD, &g_nid);
 }
 
 static void RemoveTray() {
     Shell_NotifyIcon(NIM_DELETE, &g_nid);
+    if (g_nid.hIcon) {
+        DestroyIcon(g_nid.hIcon);
+        g_nid.hIcon = NULL;
+    }
 }
 
 static void ShowTrayMenu() {
@@ -754,6 +764,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInst;
     wc.lpszClassName = L"RoachWindow";
+    wc.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ROACH_ICON));
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     RegisterClassW(&wc);
 

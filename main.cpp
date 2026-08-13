@@ -249,20 +249,22 @@ static void DrawLeg(float jx, float jy, float baseAng, float femLen, float tibLe
     float t = g_legAnimT + phase;
     float sw = AsymSwing(t);
 
-    // Femur hip angle
-    float femAng = baseAng + 0.35f * sw;
+    // Femur hip angle (unified 0.30f swing amplitude across all leg pairs)
+    float femAng = baseAng + 0.30f * sw;
     float kx = jx + cosf(femAng) * femLen;
     float ky = jy + sinf(femAng) * femLen;
 
-    // Tibia knee angle with flexion lag during forward swing
-    float kneeFlex = 0.50f * sinf(t + 0.85f);
-    float tibAng = femAng + (isLeft ? -0.48f : 0.48f) + (isLeft ? kneeFlex : -kneeFlex);
+    // Tibia knee angle (graduated kneeBase across leg pairs: 0.55f, 0.70f, 0.95f)
+    float kneeBase = (legType == 2) ? 0.95f : ((legType == 1) ? 0.70f : 0.55f);
+    float kneeFlex = 0.30f * sinf(t + 0.85f);
+    float tibAng = femAng + (isLeft ? -kneeBase : kneeBase) + (isLeft ? kneeFlex : -kneeFlex);
     float ax = kx + cosf(tibAng) * tibLen;
     float ay = ky + sinf(tibAng) * tibLen;
 
     // Tarsus foot angle with claw grip lag
+    float clawBase = (legType == 2) ? 0.30f : 0.38f;
     float clawFlex = 0.35f * sinf(t + 1.70f);
-    float tarAng = tibAng + (isLeft ? 0.38f : -0.38f) + (isLeft ? clawFlex : -clawFlex);
+    float tarAng = tibAng + (isLeft ? clawBase : -clawBase) + (isLeft ? clawFlex : -clawFlex);
     float fx = ax + cosf(tarAng) * tarLen;
     float fy = ay + sinf(tarAng) * tarLen;
 
@@ -363,14 +365,14 @@ static void DrawCockroach() {
     // -----------------------------------------------------------------------
     // 2. Dynamic 6 Spiny Legs (0.8x Scaled Biomechanical Fluid Kinematics)
     // -----------------------------------------------------------------------
-    DrawLeg( 29.0f, -7.0f, -0.65f, 19.0f, 24.0f, 14.0f, 0.0f, true, 0);
-    DrawLeg( 29.0f,  7.0f,  0.65f, 19.0f, 24.0f, 14.0f, 3.14159f, false, 0);
+    DrawLeg( 29.0f, -7.0f, -0.45f, 19.0f, 24.0f, 14.0f, 0.0f, true, 0);
+    DrawLeg( 29.0f,  7.0f,  0.45f, 19.0f, 24.0f, 14.0f, 3.14159f, false, 0);
 
-    DrawLeg(  7.0f, -8.0f, -1.45f, 22.0f, 29.0f, 17.0f, 3.14159f, true, 1);
-    DrawLeg(  7.0f,  8.0f,  1.45f, 22.0f, 29.0f, 17.0f, 0.0f, false, 1);
+    DrawLeg(  7.0f, -8.0f, -1.25f, 22.0f, 29.0f, 17.0f, 3.14159f, true, 1);
+    DrawLeg(  7.0f,  8.0f,  1.25f, 22.0f, 29.0f, 17.0f, 0.0f, false, 1);
 
-    DrawLeg(-24.0f, -8.0f, -2.30f, 30.0f, 41.0f, 22.0f, 0.0f, true, 2);
-    DrawLeg(-24.0f,  8.0f,  2.30f, 30.0f, 41.0f, 22.0f, 3.14159f, false, 2);
+    DrawLeg(-24.0f, -8.0f, -2.05f, 24.0f, 38.0f, 20.0f, 0.0f, true, 2);
+    DrawLeg(-24.0f,  8.0f,  2.05f, 24.0f, 38.0f, 20.0f, 3.14159f, false, 2);
 
     // -----------------------------------------------------------------------
     // 3. Photorealistic Photo Torso (Scaled destW = 70.0f)

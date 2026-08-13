@@ -27,7 +27,7 @@ static void*     g_dibBits = NULL;
 static Bitmap*   g_bmp = NULL;
 static Graphics* g_gfx = NULL;
 static Bitmap*   g_imgRoach = NULL;
-static int       g_canvas = 420;
+static int       g_canvas = 340;
 
 // settings (from config.ini)
 static DWORD     g_idleMs = 30 * 1000;          // idle time before spawning (default 30s)
@@ -234,16 +234,16 @@ static float AsymSwing(float t) {
 }
 
 static void DrawLeg(float jx, float jy, float baseAng, float femLen, float tibLen, float tarLen, float phase, bool isLeft, int legType) {
-    Pen femPen(Color(255, 65, 28, 10), 5.0f);
+    Pen femPen(Color(255, 65, 28, 10), 4.0f);
     femPen.SetStartCap(LineCapRound);
     femPen.SetEndCap(LineCapRound);
 
-    Pen tibPen(Color(255, 55, 22, 8), 3.6f);
+    Pen tibPen(Color(255, 55, 22, 8), 2.8f);
     tibPen.SetStartCap(LineCapRound);
     tibPen.SetEndCap(LineCapRound);
 
-    Pen spinePen(Color(255, 40, 15, 5), 2.0f);
-    Pen tarPen(Color(255, 45, 18, 6), 2.0f);
+    Pen spinePen(Color(255, 40, 15, 5), 1.6f);
+    Pen tarPen(Color(255, 45, 18, 6), 1.6f);
     tarPen.SetStartCap(LineCapRound);
 
     float t = g_legAnimT + phase;
@@ -278,8 +278,8 @@ static void DrawLeg(float jx, float jy, float baseAng, float femLen, float tibLe
         float sx = kx + (ax - kx) * ratio;
         float sy = ky + (ay - ky) * ratio;
         float sAng = tibAng + (isLeft ? -1.3f : 1.3f);
-        float spx = sx + cosf(sAng) * 8.0f;
-        float spy = sy + sinf(sAng) * 8.0f;
+        float spx = sx + cosf(sAng) * 6.5f;
+        float spy = sy + sinf(sAng) * 6.5f;
         g_gfx->DrawLine(&spinePen, sx, sy, spx, spy);
     }
 
@@ -289,29 +289,29 @@ static void DrawLeg(float jx, float jy, float baseAng, float femLen, float tibLe
 
 static void DrawCockroach() {
     // -----------------------------------------------------------------------
-    // 1. Tail Cerci & Abdomen Tip (1.5x scaled)
+    // 1. Tail Cerci & Abdomen Tip (0.8x scaled)
     // -----------------------------------------------------------------------
-    Pen cerciPen(Color(255, 45, 18, 6), 3.0f);
+    Pen cerciPen(Color(255, 45, 18, 6), 2.4f);
     cerciPen.SetStartCap(LineCapRound);
     cerciPen.SetEndCap(LineCapRound);
-    float cerciWig = sinf(g_antAnimT * 2.0f) * 1.8f;
-    g_gfx->DrawLine(&cerciPen, -75.0f, -6.0f, -98.0f, -16.0f + cerciWig);
-    g_gfx->DrawLine(&cerciPen, -75.0f,  6.0f, -98.0f,  16.0f - cerciWig);
+    float cerciWig = sinf(g_antAnimT * 2.0f) * 1.4f;
+    g_gfx->DrawLine(&cerciPen, -60.0f, -5.0f, -78.0f, -13.0f + cerciWig);
+    g_gfx->DrawLine(&cerciPen, -60.0f,  5.0f, -78.0f,  13.0f - cerciWig);
 
     // -----------------------------------------------------------------------
-    // 2. Dynamic 6 Spiny Legs (1.5x Scaled Biomechanical Fluid Kinematics)
+    // 2. Dynamic 6 Spiny Legs (0.8x Scaled Biomechanical Fluid Kinematics)
     // -----------------------------------------------------------------------
-    DrawLeg( 36.0f, -9.0f, -0.65f, 24.0f, 30.0f, 18.0f, 0.0f, true, 0);
-    DrawLeg( 36.0f,  9.0f,  0.65f, 24.0f, 30.0f, 18.0f, 3.14159f, false, 0);
+    DrawLeg( 29.0f, -7.0f, -0.65f, 19.0f, 24.0f, 14.0f, 0.0f, true, 0);
+    DrawLeg( 29.0f,  7.0f,  0.65f, 19.0f, 24.0f, 14.0f, 3.14159f, false, 0);
 
-    DrawLeg(  9.0f,-10.0f, -1.45f, 28.0f, 36.0f, 21.0f, 3.14159f, true, 1);
-    DrawLeg(  9.0f, 10.0f,  1.45f, 28.0f, 36.0f, 21.0f, 0.0f, false, 1);
+    DrawLeg(  7.0f, -8.0f, -1.45f, 22.0f, 29.0f, 17.0f, 3.14159f, true, 1);
+    DrawLeg(  7.0f,  8.0f,  1.45f, 22.0f, 29.0f, 17.0f, 0.0f, false, 1);
 
-    DrawLeg(-30.0f,-10.0f, -2.30f, 37.0f, 51.0f, 27.0f, 0.0f, true, 2);
-    DrawLeg(-30.0f, 10.0f,  2.30f, 37.0f, 51.0f, 27.0f, 3.14159f, false, 2);
+    DrawLeg(-24.0f, -8.0f, -2.30f, 30.0f, 41.0f, 22.0f, 0.0f, true, 2);
+    DrawLeg(-24.0f,  8.0f,  2.30f, 30.0f, 41.0f, 22.0f, 3.14159f, false, 2);
 
     // -----------------------------------------------------------------------
-    // 3. Photorealistic Photo Torso (Scaled up destW = 87.0f)
+    // 3. Photorealistic Photo Torso (Scaled destW = 70.0f)
     // -----------------------------------------------------------------------
     if (g_imgRoach && g_imgRoach->GetLastStatus() == Ok) {
         float wobble = (g_subState == SUB_RUN) ? sinf(g_legAnimT * 2.5f) * 2.5f : 0.0f;
@@ -327,8 +327,8 @@ static void DrawCockroach() {
         // Source crop rectangle for pure body
         RectF srcRect(imgW * 0.28f, imgH * 0.16f, imgW * 0.44f, imgH * 0.72f);
 
-        // Destination rect on canvas (87px wide x ~141px long)
-        float destW = 87.0f;
+        // Destination rect on canvas (70px wide x ~113px long)
+        float destW = 70.0f;
         float destH = destW * (srcRect.Height / srcRect.Width);
         RectF destRect(-destW / 2.0f, -destH / 2.0f, destW, destH);
 
@@ -343,42 +343,42 @@ static void DrawCockroach() {
     } else {
         // Procedural fallback
         SolidBrush abdoBrush(Color(255, 55, 22, 8));
-        g_gfx->FillEllipse(&abdoBrush, -80.0f, -15.0f, 33.0f, 30.0f);
+        g_gfx->FillEllipse(&abdoBrush, -65.0f, -12.0f, 26.0f, 24.0f);
     }
 
     // -----------------------------------------------------------------------
-    // 4. Dynamic Whip Antennae (1.5x Scaled Reach ~170px)
+    // 4. Dynamic Whip Antennae (0.8x Scaled Reach ~136px)
     // -----------------------------------------------------------------------
-    Pen antPen1(Color(255, 35, 12, 4), 3.2f);
+    Pen antPen1(Color(255, 35, 12, 4), 2.5f);
     antPen1.SetStartCap(LineCapRound);
     antPen1.SetEndCap(LineCapRound);
 
-    Pen antPen2(Color(255, 35, 12, 4), 1.8f);
+    Pen antPen2(Color(255, 35, 12, 4), 1.4f);
     antPen2.SetStartCap(LineCapRound);
     antPen2.SetEndCap(LineCapRound);
 
     // Antenna Sockets
     SolidBrush antJoint(Color(255, 35, 12, 4));
-    g_gfx->FillEllipse(&antJoint, 40.0f, -7.0f, 6.5f, 6.5f);
-    g_gfx->FillEllipse(&antJoint, 40.0f,  1.0f, 6.5f, 6.5f);
+    g_gfx->FillEllipse(&antJoint, 32.0f, -5.5f, 5.0f, 5.0f);
+    g_gfx->FillEllipse(&antJoint, 32.0f,  1.0f, 5.0f, 5.0f);
 
     float ampMult = (g_subState == SUB_PAUSE) ? 3.0f : 1.6f;
 
     // Left Antenna: independent frequency 1.4f & phase
-    float lWig1 = sinf(g_antAnimT * 1.4f + 0.5f) * (5.4f + 3.0f * sinf(g_antAnimT * 0.35f)) * ampMult;
-    float lWig2 = cosf(g_antAnimT * 1.1f + 1.2f) * (4.2f + 2.2f * cosf(g_antAnimT * 0.28f)) * ampMult;
+    float lWig1 = sinf(g_antAnimT * 1.4f + 0.5f) * (4.3f + 2.4f * sinf(g_antAnimT * 0.35f)) * ampMult;
+    float lWig2 = cosf(g_antAnimT * 1.1f + 1.2f) * (3.3f + 1.8f * cosf(g_antAnimT * 0.28f)) * ampMult;
 
     // Right Antenna: independent frequency 1.7f, phase +2.1f & amplitude modulation
-    float rWig1 = sinf(g_antAnimT * 1.7f + 2.1f) * (6.0f + 3.6f * cosf(g_antAnimT * 0.42f)) * ampMult;
-    float rWig2 = cosf(g_antAnimT * 1.3f + 0.8f) * (3.8f + 2.0f * sinf(g_antAnimT * 0.31f)) * ampMult;
+    float rWig1 = sinf(g_antAnimT * 1.7f + 2.1f) * (4.8f + 2.8f * cosf(g_antAnimT * 0.42f)) * ampMult;
+    float rWig2 = cosf(g_antAnimT * 1.3f + 0.8f) * (3.0f + 1.6f * sinf(g_antAnimT * 0.31f)) * ampMult;
 
     // Draw Left Antenna
-    g_gfx->DrawBezier(&antPen1, 43.0f, -5.0f, 66.0f, -15.0f, 93.0f, -22.0f + lWig1, 120.0f + lWig2, -33.0f + lWig1);
-    g_gfx->DrawBezier(&antPen2, 120.0f + lWig2, -33.0f + lWig1, 138.0f, -40.0f, 153.0f, -46.0f + lWig1, 171.0f, -52.0f + lWig2);
+    g_gfx->DrawBezier(&antPen1, 34.0f, -4.0f, 53.0f, -12.0f, 74.0f, -18.0f + lWig1, 96.0f + lWig2, -26.0f + lWig1);
+    g_gfx->DrawBezier(&antPen2, 96.0f + lWig2, -26.0f + lWig1, 110.0f, -32.0f, 122.0f, -37.0f + lWig1, 136.0f, -42.0f + lWig2);
 
     // Draw Right Antenna
-    g_gfx->DrawBezier(&antPen1, 43.0f,  5.0f, 66.0f,  15.0f, 93.0f,  22.0f + rWig1, 120.0f + rWig2,  33.0f + rWig1);
-    g_gfx->DrawBezier(&antPen2, 120.0f + rWig2,  33.0f + rWig1, 138.0f,  40.0f, 153.0f,  46.0f + rWig1, 171.0f,  52.0f + rWig2);
+    g_gfx->DrawBezier(&antPen1, 34.0f,  4.0f, 53.0f,  12.0f, 74.0f,  18.0f + rWig1, 96.0f + rWig2,  26.0f + rWig1);
+    g_gfx->DrawBezier(&antPen2, 96.0f + rWig2,  26.0f + rWig1, 110.0f,  32.0f, 122.0f,  37.0f + rWig1, 136.0f,  42.0f + rWig2);
 }
 
 static void RenderFrame() {
@@ -455,12 +455,28 @@ static void StartFlee() {
 }
 
 static void UpdateCrawl(float dt) {
-    float cx = (float)g_scrX + (float)g_scrW / 2.0f;
-    float cy = (float)g_scrY + (float)g_scrH / 2.0f;
+    POINT ptRoach = { (LONG)g_x, (LONG)g_y };
+    HMONITOR hMon = MonitorFromPoint(ptRoach, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi = { sizeof(mi) };
 
-    // Layer 3: Emergency Fast Return if off-screen
-    bool isOffScreen = g_x < (float)g_scrX - 10.0f || g_x > (float)(g_scrX + g_scrW) + 10.0f ||
-                       g_y < (float)g_scrY - 10.0f || g_y > (float)(g_scrY + g_scrH) + 10.0f;
+    float monMinX = (float)g_scrX + 40.0f;
+    float monMaxX = (float)(g_scrX + g_scrW) - 40.0f;
+    float monMinY = (float)g_scrY + 40.0f;
+    float monMaxY = (float)(g_scrY + g_scrH) - 40.0f;
+
+    if (GetMonitorInfoW(hMon, &mi)) {
+        monMinX = (float)mi.rcMonitor.left + 40.0f;
+        monMaxX = (float)mi.rcMonitor.right - 40.0f;
+        monMinY = (float)mi.rcMonitor.top + 40.0f;
+        monMaxY = (float)mi.rcMonitor.bottom - 40.0f;
+    }
+
+    float cx = (monMinX + monMaxX) / 2.0f;
+    float cy = (monMinY + monMaxY) / 2.0f;
+
+    // Layer 3: Emergency Fast Return if off-screen (outside all virtual screens)
+    bool isOffScreen = g_x < (float)g_scrX - 20.0f || g_x > (float)(g_scrX + g_scrW) + 20.0f ||
+                       g_y < (float)g_scrY - 20.0f || g_y > (float)(g_scrY + g_scrH) + 20.0f;
     if (isOffScreen && !g_entering) {
         g_heading = atan2f(cy - g_y, cx - g_x);
         g_headingTarget = g_heading;
@@ -474,8 +490,8 @@ static void UpdateCrawl(float dt) {
     }
 
     if (g_entering) {
-        bool inside = g_x > g_scrX + 60 && g_x < g_scrX + g_scrW - 60 &&
-                      g_y > g_scrY + 60 && g_y < g_scrY + g_scrH - 60;
+        bool inside = g_x > monMinX + 20.0f && g_x < monMaxX - 20.0f &&
+                      g_y > monMinY + 20.0f && g_y < monMaxY - 20.0f;
         if (inside) {
             g_entering = false;
             g_headingTarget = g_heading;
@@ -488,10 +504,10 @@ static void UpdateCrawl(float dt) {
     g_antAnimT += dt * 1.5f;
 
     if (g_subState == SUB_RUN) {
-        // Layer 1: Wide early warning steering margin (180px)
+        // Layer 1: Wide early warning steering margin (180px) on current monitor
         float margin = 180.0f;
-        bool nearEdge = g_x < g_scrX + margin || g_x > g_scrX + g_scrW - margin ||
-                         g_y < g_scrY + margin || g_y > g_scrY + g_scrH - margin;
+        bool nearEdge = g_x < monMinX + margin || g_x > monMaxX - margin ||
+                         g_y < monMinY + margin || g_y > monMaxY - margin;
         
         if (nearEdge && !g_entering) {
             g_headingTarget = atan2f(cy - g_y, cx - g_x);
@@ -510,17 +526,12 @@ static void UpdateCrawl(float dt) {
         g_x += vx * dt;
         g_y += vy * dt;
 
-        // Layer 2: Hard Physical Inner Boundary Clamp
+        // Layer 2: Hard Physical Inner Boundary Clamp per active monitor
         if (!g_entering) {
-            float minX = (float)g_scrX + 40.0f;
-            float maxX = (float)(g_scrX + g_scrW) - 40.0f;
-            float minY = (float)g_scrY + 40.0f;
-            float maxY = (float)(g_scrY + g_scrH) - 40.0f;
-
-            if (g_x < minX) { g_x = minX; g_headingTarget = atan2f(cy - g_y, cx - g_x); g_heading = g_headingTarget; }
-            if (g_x > maxX) { g_x = maxX; g_headingTarget = atan2f(cy - g_y, cx - g_x); g_heading = g_headingTarget; }
-            if (g_y < minY) { g_y = minY; g_headingTarget = atan2f(cy - g_y, cx - g_x); g_heading = g_headingTarget; }
-            if (g_y > maxY) { g_y = maxY; g_headingTarget = atan2f(cy - g_y, cx - g_x); g_heading = g_headingTarget; }
+            if (g_x < monMinX) { g_x = monMinX; g_headingTarget = atan2f(cy - g_y, cx - g_x); g_heading = g_headingTarget; }
+            if (g_x > monMaxX) { g_x = monMaxX; g_headingTarget = atan2f(cy - g_y, cx - g_x); g_heading = g_headingTarget; }
+            if (g_y < monMinY) { g_y = monMinY; g_headingTarget = atan2f(cy - g_y, cx - g_x); g_heading = g_headingTarget; }
+            if (g_y > monMaxY) { g_y = monMaxY; g_headingTarget = atan2f(cy - g_y, cx - g_x); g_heading = g_headingTarget; }
         }
 
         // Leg tripod gait updates ONLY when running
@@ -640,6 +651,13 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         case WM_TRAY:
             if (lp == WM_RBUTTONUP || lp == WM_LBUTTONUP) ShowTrayMenu();
             return 0;
+        case WM_DISPLAYCHANGE:
+        case 0x02E0: // WM_DPICHANGED
+            g_scrX = GetSystemMetrics(SM_XVIRTUALSCREEN);
+            g_scrY = GetSystemMetrics(SM_YVIRTUALSCREEN);
+            g_scrW = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+            g_scrH = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+            return 0;
         case WM_DESTROY:
             RemoveTray();
             PostQuitMessage(0);
@@ -658,7 +676,20 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int) {
         return 0;
     }
 
-    SetProcessDPIAware();
+    // Enable Per-Monitor V2 DPI Awareness for multi-monitor mixed DPI support
+    typedef BOOL(WINAPI *SetProcessDpiAwarenessContextProc)(HANDLE);
+    HMODULE hUser32 = GetModuleHandleW(L"user32.dll");
+    if (hUser32) {
+        SetProcessDpiAwarenessContextProc setDpi = (SetProcessDpiAwarenessContextProc)GetProcAddress(hUser32, "SetProcessDpiAwarenessContext");
+        if (setDpi) {
+            setDpi((HANDLE)-4); // DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = -4
+        } else {
+            SetProcessDPIAware();
+        }
+    } else {
+        SetProcessDPIAware();
+    }
+
     srand((unsigned)GetTickCount());
 
     GdiplusStartupInput gsi;

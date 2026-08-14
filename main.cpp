@@ -29,7 +29,7 @@ static Graphics* g_gfx = NULL;
 static Bitmap*   g_imgRoach = NULL;
 static int       g_canvas = 340;
 
-// settings (from config.ini)
+// settings (from cockroach.ini)
 static DWORD     g_idleMs = 30 * 1000;          // idle time before spawning (default 30s)
 
 // virtual screen
@@ -123,7 +123,7 @@ static void LoadConfig() {
     WCHAR dir[MAX_PATH];
     GetExeDir(dir, MAX_PATH);
     WCHAR path[MAX_PATH];
-    wsprintfW(path, L"%sconfig.ini", dir);
+    wsprintfW(path, L"%scockroach.ini", dir);
 
     HANDLE h = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, NULL,
                            OPEN_EXISTING, 0, NULL);

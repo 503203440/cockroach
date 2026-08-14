@@ -24,7 +24,7 @@ cockroach/
 ├── resource.rc       # Win32 resource script (embeds cockroach.png into EXE as IDR_ROACH_PNG)
 ├── resource.h        # Resource header definitions (IDR_ROACH_PNG = 101)
 ├── cockroach.png      # 32-bit ARGB photorealistic cockroach torso image
-├── config.ini        # Idle timeout configuration file (idle_seconds = 30)
+├── cockroach.ini      # Idle timeout configuration file (idle_seconds = 30)
 ├── build.bat         # MSVC batch build script
 ├── .gitignore        # Git ignore file
 ├── README.md         # User-facing documentation

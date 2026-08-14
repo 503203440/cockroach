@@ -19,9 +19,9 @@
 
 ---
 
-## ⚙️ 配置文件说明 (`config.ini`)
+## ⚙️ 配置文件说明 (`cockroach.ini`)
 
-程序在同目录下读取 `config.ini`：
+程序在同目录下读取 `cockroach.ini`：
 ```ini
 # 蟑螂小恶作剧 配置文件
 # idle_seconds : 无鼠标/键盘操作多久后出现蟑螂（秒）
@@ -53,7 +53,7 @@ cockroach/
 ├── resource.rc       # Win32 资源脚本（将 cockroach.png 打包入 EXE）
 ├── resource.h        # 资源头文件定义
 ├── cockroach.png      # 32 位 ARGB 写实蟑螂标本图片
-├── config.ini        # 闲置等待时间配置文件
+├── cockroach.ini      # 闲置等待时间配置文件
 ├── build.bat         # MSVC 一键编译脚本
 ├── .gitignore        # Git 过滤规则
 └── README.md         # 项目说明文档
